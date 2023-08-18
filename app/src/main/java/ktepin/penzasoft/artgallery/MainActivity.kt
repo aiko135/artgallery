@@ -18,20 +18,22 @@ import ktepin.penzasoft.artgallery.ui.theme.ArtgalleryTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            Column(
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Card{
-                    Greeting("Android")
-                    Greeting("dev")
+            ArtgalleryTheme {
+                Column(
+                    modifier = Modifier
+                        .background(Color.LightGray)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Card{
+                        Greeting("Android")
+                        Greeting("dev")
+                    }
+
                 }
-
             }
-
 
 //            Greeting("Hellow")
 //            ArtgalleryTheme {
