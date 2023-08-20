@@ -11,92 +11,45 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import ktepin.penzasoft.artgallery.ui.theme.ArtgalleryTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-import ktepin.penzasoft.artgallery.domain.model.Image
-import ktepin.penzasoft.artgallery.domain.model.RequestError
-import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
-import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import ktepin.penzasoft.artgallery.ui.screen.ImageFullScreen
+import ktepin.penzasoft.artgallery.ui.screen.ImagesGreedScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
+            val navController = rememberNavController()
             ArtgalleryTheme {
-
-                Column(
-                    modifier = Modifier
-                        .background(Color.LightGray)
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Card{
-                        Greeting("Android")
+                NavHost(navController = navController, startDestination = "screen_im_grid") {
+                    composable("screen_im_grid"){
+                        ImagesGreedScreen{
+                            navController.navigate("screen_im_full")
+                        }
                     }
-
+                    composable("screen_im_full"){
+                        ImageFullScreen()
+                    }
                 }
             }
-
-//            Greeting("Hellow")
-//            ArtgalleryTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    Column{
-//                        Greeting("Android")
-//                        Greeting("dev")
-//                    }
-//                }
-//            }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, viewModel: MainViewModel = viewModel() ) {
-    var page: Int by remember { mutableStateOf(0) }
-    var text = "TMP"
-    Log.d("Repository", "Recompose")
-    Column {
-        Button(
-            onClick = {
-                page ++
-                Log.d("Repository", page.toString())
-            },
-            colors=ButtonDefaults.buttonColors()
-        ){
-            Text(
-                "Button"
-            )
-        }
-        Text(
-            text
-        )
-        Text(
-            page.toString()
-        )
-    }
-//    Text(text = "Hello $name!")
-}
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ArtgalleryTheme {
-        Greeting("world")
+       Text("world")
     }
 }
 
