@@ -68,16 +68,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, viewModel: MainViewModel = viewModel() ) {
     var page: Int by remember { mutableStateOf(0) }
-    val data = viewModel.imageStateFlow.collectAsState()
-
-//    LaunchedEffect(Unit) {
-//
-//    }
     var text = "TMP"
-    if (data.value is RequestSuccess<*>){
-        val a = data.value as RequestSuccess<List<Image>>
-        text = a.entity.size.toString()
-    }
     Log.d("Repository", "Recompose")
     Column {
         Button(
