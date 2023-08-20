@@ -1,5 +1,6 @@
 package ktepin.penzasoft.artgallery.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +15,14 @@ import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.domain.model.RequestError
 import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
 import org.koin.java.KoinJavaComponent.inject
+import java.util.Random
 
 class MainViewModel : ViewModel() {
     private val imageRepo:ImageRepository by inject(LocalImageRepository::class.java)
 
-    data class UiState(val images: MutableList<Image>, var imageGroupError:Boolean)
+    data class UiState(var listSize:Int, var images: MutableList<Image>, var imageGroupError:Boolean)
 
-    private val _uiState = MutableStateFlow(UiState(mutableListOf(),false))
+    private val _uiState = MutableStateFlow(UiState(0, mutableListOf(),false))
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     init {
@@ -38,7 +40,8 @@ class MainViewModel : ViewModel() {
                         _uiState.value.imageGroupError = true
                     }
                 }
-//                 _uiState.value.copy(_uiState.value.images, _uiState.value.imageGroupError)
+                 //Recreate UiState inner fields to trigger recompose
+                 _uiState.value =  UiState(_uiState.value.images.size, _uiState.value.images, _uiState.value.imageGroupError)
             }
         }
     }
