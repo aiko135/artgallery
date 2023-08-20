@@ -31,22 +31,29 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ktepin.penzasoft.artgallery.domain.model.Image
+import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
+
+object GridConfig{
+    //number of images left to display that triggers new page load
+    const val ELEMENTS_LEFT_TO_UPDATE = 6
+}
 
 @Composable
 fun ImagesGreedScreen(viewModel: MainViewModel, onImageSelect: () -> Unit) {
+
     var page: Int by remember { mutableStateOf(1) }
     val imagesCollected = viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyStaggeredGridState()
 
     Log.d("Repository", "Recompose ImagesGreedScreen")
 
-    LaunchedEffect(lazyGridState.canScrollForward){
+    LaunchedEffect(lazyGridState.firstVisibleItemIndex){
         //Effect launched after every scroll step
         //Also recompose after every effect state change
 
-        Log.d("Repository",lazyGridState.canScrollForward.toString())
-        if (!lazyGridState.canScrollForward){
+//        Log.d("Repository",lazyGridState.firstVisibleItemIndex.toString())
+        if (imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex < ELEMENTS_LEFT_TO_UPDATE){
             page++
         }
     }
@@ -55,9 +62,6 @@ fun ImagesGreedScreen(viewModel: MainViewModel, onImageSelect: () -> Unit) {
         viewModel.loadPage(page)
     }
 
-//    LaunchedEffect(imagesCollected){
-//        Log.d("Repository", "Size of array: "+imagesCollected.value.images.size.toString())
-//    }
 
     LazyVerticalStaggeredGrid(
         state = lazyGridState,
