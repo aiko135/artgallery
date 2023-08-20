@@ -16,22 +16,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ktepin.penzasoft.artgallery.ui.theme.ArtgalleryTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ktepin.penzasoft.artgallery.ui.screen.ImageFullScreen
 import ktepin.penzasoft.artgallery.ui.screen.ImagesGreedScreen
+import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val viewModel: MainViewModel = viewModel()
             ArtgalleryTheme {
+                Log.d("Repository", "Recompose main")
                 NavHost(navController = navController, startDestination = "screen_im_grid") {
                     composable("screen_im_grid"){
-                        ImagesGreedScreen{
+                        ImagesGreedScreen(viewModel){
                             navController.navigate("screen_im_full")
                         }
                     }
