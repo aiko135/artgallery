@@ -58,7 +58,7 @@ fun ImagesGreedScreen(viewModel: MainViewModel, onImageSelect: () -> Unit) {
             }
         }
         GlideImage(
-            model = imagesCollected.value.images[page].links.download,
+            model = imagesCollected.value.images[0].links.download,
             contentDescription = "test"
         )
     }
