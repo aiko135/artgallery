@@ -28,6 +28,9 @@ import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val screenWidthDp = resources.configuration.screenWidthDp.toFloat()
+        val density = resources.displayMetrics.density
         setContent {
             val navController = rememberNavController()
             val viewModel: MainViewModel = viewModel()
@@ -35,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("Repository", "Recompose main")
                 NavHost(navController = navController, startDestination = "screen_im_grid") {
                     composable("screen_im_grid"){
-                        ImagesGreedScreen(viewModel){
+                        ImagesGreedScreen(viewModel, screenWidthDp, density){
                             navController.navigate("screen_im_full")
                         }
                     }

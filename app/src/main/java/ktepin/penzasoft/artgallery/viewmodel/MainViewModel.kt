@@ -18,30 +18,38 @@ import org.koin.java.KoinJavaComponent.inject
 import java.util.Random
 
 class MainViewModel : ViewModel() {
-    private val imageRepo:ImageRepository by inject(LocalImageRepository::class.java)
+    private val imageRepo: ImageRepository by inject(LocalImageRepository::class.java)
 
-    data class UiState(var listSize:Int, var images: MutableList<Image>, var imageGroupError:Boolean)
+    data class UiState(
+        var prevPage: Int,
+        var images: MutableList<Image>,
+        var imageGroupError: Boolean
+    )
 
-    private val _uiState = MutableStateFlow(UiState(0, mutableListOf(),false))
+    private val _uiState = MutableStateFlow(UiState(0, mutableListOf(), false))
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     init {
         loadPage(1);
     }
 
-    fun loadPage(page:Int){
+    fun loadPage(page: Int) {
         viewModelScope.launch {
-             imageRepo.getImagePage(page).collect{
-                when(it){
-                    is RequestSuccess -> {
-                        _uiState.value.images.addAll(it.entity)
+            Log.d("Repository", "$page != " + _uiState.value.prevPage.toString())
+            if (page != _uiState.value.prevPage) {
+                imageRepo.getImagePage(page).collect {
+                    when (it) {
+                        is RequestSuccess -> {
+                            _uiState.value.images.addAll(it.entity)
+                        }
+
+                        is RequestError -> {
+                            _uiState.value.imageGroupError = true
+                        }
                     }
-                    is RequestError -> {
-                        _uiState.value.imageGroupError = true
-                    }
+                    //Recreate UiState inner fields to trigger recompose
+                    _uiState.value = UiState(page, _uiState.value.images, _uiState.value.imageGroupError)
                 }
-                 //Recreate UiState inner fields to trigger recompose
-                 _uiState.value =  UiState(_uiState.value.images.size, _uiState.value.images, _uiState.value.imageGroupError)
             }
         }
     }

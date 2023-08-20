@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,109 +30,105 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
+import ktepin.penzasoft.artgallery.ui.theme.Purple80
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
-object GridConfig{
+object GridConfig {
     //number of images left to display that triggers new page load
-    const val ELEMENTS_LEFT_TO_UPDATE = 6
+    const val ELEMENTS_LEFT_TO_UPDATE = 10
 }
 
 @Composable
-fun ImagesGreedScreen(viewModel: MainViewModel, onImageSelect: () -> Unit) {
-
+fun ImagesGreedScreen(
+    viewModel: MainViewModel,
+    screenWidthDp: Float,
+    density:Float,
+    onImageSelect: () -> Unit
+) {
     var page: Int by remember { mutableStateOf(1) }
     val imagesCollected = viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyStaggeredGridState()
 
     Log.d("Repository", "Recompose ImagesGreedScreen")
 
-    LaunchedEffect(lazyGridState.firstVisibleItemIndex){
+    LaunchedEffect(lazyGridState.firstVisibleItemIndex) {
         //Effect launched after every scroll step
         //Also recompose after every effect state change
-
+//        Log.d("Repository",(imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex).toString())
 //        Log.d("Repository",lazyGridState.firstVisibleItemIndex.toString())
         if (imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex < ELEMENTS_LEFT_TO_UPDATE){
             page++
+            viewModel.loadPage(page)
         }
     }
 
-    LaunchedEffect(page){
-        viewModel.loadPage(page)
-    }
+//    LaunchedEffect(lazyGridState.canScrollForward){
+//        if(!lazyGridState.canScrollForward){
+//            page++
+//        }
+//    }
+
+//    LaunchedEffect(page) {
+//        viewModel.loadPage(page)
+//    }
 
 
     LazyVerticalStaggeredGrid(
         state = lazyGridState,
         columns = StaggeredGridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
-    ){
-        items(imagesCollected.value.images){
-            GridItem(image = it)
+        contentPadding = PaddingValues(0.dp),
+    ) {
+        items(imagesCollected.value.images) {
+            GridItem(image = it, screenWidthDp=screenWidthDp, density=density)
         }
+//        item { Spacer(500) }
+//        item { Spacer(500) }
     }
-
-
-
-//    Column(
-//        modifier = Modifier
-//            .background(Color.LightGray)
-//            .fillMaxSize(),
-//        verticalArrangement = Arrangement.Top,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Card {
-//            Column {
-//                Button(
-//                    onClick = {
-//                        page++
-//                        viewModel.loadPage(page)
-//                        Log.d("Repository", page.toString())
-//                    },
-//                    colors = ButtonDefaults.buttonColors()
-//                ) {
-//                    Text(
-//                        "Button"
-//                    )
-//                }
-//                Text("${page.toString()}")
-//            }
-//        }
-//        AsyncImage(
-//            model = imagesCollected.value.images[0].links.download,
-//            contentDescription = null,
-//        )
-//    }
 }
 
 @Composable
-fun GridItem(image:Image){
+fun GridItem(image: Image, screenWidthDp: Float, density: Float) {
+    //Pre image Container size calculation. Lag reduce
+    val padding = 4
+    val containerWidthDp = screenWidthDp / 2 - padding * 4
+    val containerHeightDp = itemHeightDp(image, containerWidthDp, density)
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
+            .height(Dp(containerHeightDp))
+            .padding(padding.dp)
             .clip(RoundedCornerShape(5.dp))
-            .background(Color.Green)
-    ){
+            .background(Purple80),
+    ) {
         AsyncImage(
+            modifier = Modifier.fillMaxWidth(),
             model = image.urls.small,
             contentDescription = null,
+            contentScale = ContentScale.FillWidth
         )
     }
 }
 
+fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float {
+    val imWidthDp:Float = im.width / density
+    val imHeightDp:Float = im.height / density
+    return imHeightDp * containerWidthDp / imWidthDp
+}
+
 //@Composable
-//fun Header(){
+//fun Spacer(spacerHeightDp: Int) {
 //    Row(
 //        modifier = Modifier
+//            .background(Purple80)
+//            .height(Dp(spacerHeightDp.toFloat()))
 //            .fillMaxWidth(),
-//        horizontalArrangement = Arrangement.Center
-//    ){
-//        Text(text = "Unsplash pictures gallery")
-//    }
+//    ) {}
 //}
