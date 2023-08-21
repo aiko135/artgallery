@@ -2,6 +2,7 @@ package ktepin.penzasoft.artgallery.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,7 @@ fun ImagesGreedScreen(
     viewModel: MainViewModel,
     screenWidthDp: Float,
     density:Float,
-    onImageSelect: () -> Unit
+    onImageSelect: (im:Image) -> Unit
 ) {
     var page: Int by remember { mutableStateOf(1) }
     val imagesCollected = viewModel.uiState.collectAsState()
@@ -74,8 +75,8 @@ fun ImagesGreedScreen(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(0.dp),
     ) {
-        items(imagesCollected.value.images) {
-            GridItem(image = it, screenWidthDp=screenWidthDp, density=density)
+        items(imagesCollected.value.images) { //TODO key = {it.id}
+            GridItem(image = it, onImageSelect=onImageSelect, screenWidthDp=screenWidthDp, density=density)
         }
         item { Spacer(500) }
         item { Spacer(500) }
@@ -83,8 +84,13 @@ fun ImagesGreedScreen(
 }
 
 @Composable
-fun GridItem(image: Image, screenWidthDp: Float, density: Float) {
-    //Pre image Container size calculation. Lag reduce
+fun GridItem(
+    image: Image,
+    onImageSelect: (im:Image) -> Unit,
+    screenWidthDp: Float,
+    density: Float
+) {
+    //manual container size calculation. Lag reduce
     val padding = 4
     val containerWidthDp = screenWidthDp / 2 - padding * 4
     val containerHeightDp = itemHeightDp(image, containerWidthDp, density)
@@ -94,7 +100,8 @@ fun GridItem(image: Image, screenWidthDp: Float, density: Float) {
             .height(Dp(containerHeightDp))
             .padding(padding.dp)
             .clip(RoundedCornerShape(5.dp))
-            .background(Purple80),
+            .clickable { onImageSelect.invoke(image) }
+            .background(PurpleGrey80),
     ) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
@@ -105,7 +112,7 @@ fun GridItem(image: Image, screenWidthDp: Float, density: Float) {
     }
 }
 
-fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float {
+fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float { //TODO REFACTOR
     val imWidthDp:Float = im.width / density
     val imHeightDp:Float = im.height / density
     return imHeightDp * containerWidthDp / imWidthDp
@@ -113,10 +120,10 @@ fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float {
 
 @Composable
 fun Spacer(spacerHeightDp: Int) {
-    Row(
+    Box(
         modifier = Modifier
             .background(PurpleGrey80)
             .height(Dp(spacerHeightDp.toFloat()))
             .fillMaxWidth(),
-    ) {}
+    )
 }

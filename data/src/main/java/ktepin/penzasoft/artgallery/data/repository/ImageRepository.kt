@@ -18,6 +18,6 @@ open class ImageRepository(
      override fun getImagePage(imagePage:Int): Flow<ApiRequestResult<List<Image>>> = flow {
          val result = executeRequest(api.getImagePage(imagePage.toString()))
          emit(result)
-    }.flowOn(Dispatchers.IO)
+    }
 
 }
