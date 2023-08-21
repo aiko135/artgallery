@@ -19,12 +19,13 @@ import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
-    data class DisplayConfig(val screenWidthDp:Float, val density:Float)
+    data class DisplayConfig(val screenHeightDp:Float, val screenWidthDp:Float, val density:Float)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val config = DisplayConfig(
+            resources.configuration.screenHeightDp.toFloat(),
             resources.configuration.screenWidthDp.toFloat(),
             resources.displayMetrics.density
         )
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("screen_full"){
                         //SCREEN 2
-                        ImageFullScreen(fullScreenViewModel)
+                        ImageFullScreen(fullScreenViewModel, config)
                     }
                 }
             }
