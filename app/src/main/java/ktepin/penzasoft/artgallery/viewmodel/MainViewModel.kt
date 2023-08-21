@@ -16,11 +16,12 @@ import ktepin.penzasoft.artgallery.domain.model.ApiRequestResult
 import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.domain.model.RequestError
 import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
+import ktepin.penzasoft.artgallery.domain.usecase.GetImagePageUseCase
 import org.koin.java.KoinJavaComponent.inject
 import java.util.Random
 
 class MainViewModel : ViewModel() {
-    private val imageRepo: ImageRepository by inject(LocalImageRepository::class.java)
+    private val getImagePageUseCase: GetImagePageUseCase by inject( GetImagePageUseCase::class.java) //TODO usecase
 
     data class UiState(
         var prevPage: Int,
@@ -38,7 +39,7 @@ class MainViewModel : ViewModel() {
     fun loadPage(page: Int) {
         if (page != _uiState.value.prevPage) {
             viewModelScope.launch(Dispatchers.IO) {
-                imageRepo.getImagePage(page).collect {
+                getImagePageUseCase.getImagePage(page).collect {
                     when (it) {
                         is RequestSuccess -> {
                             _uiState.value.images.addAll(it.entity)

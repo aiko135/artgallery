@@ -71,7 +71,6 @@ fun ImagesGreedScreen(
         }
     }
 
-
     LazyVerticalStaggeredGrid(
         state = lazyGridState,
         columns = StaggeredGridCells.Fixed(2),

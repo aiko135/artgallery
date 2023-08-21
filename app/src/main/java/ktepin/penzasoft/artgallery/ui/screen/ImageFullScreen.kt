@@ -19,9 +19,9 @@ import ktepin.penzasoft.artgallery.viewmodel.FullScreenViewModel
 
 @Composable
 fun ImageFullScreen(
+    viewModel:FullScreenViewModel
 ) {
-    val fullScreenViewModel: FullScreenViewModel = viewModel()
-    val currentImage = fullScreenViewModel.selectedImage.collectAsState()
+    val currentImage = viewModel.selectedImage.collectAsState()
 
     Log.d("Artgallery.UI", "Recompose ImageFullScreen")
     Box(
@@ -30,9 +30,11 @@ fun ImageFullScreen(
             .background(Color.Black),
         contentAlignment = Alignment.Center,
     ) {
-        Box(modifier = Modifier
-            .width(50.dp)
-            .height(50.dp)
-            .background(Color.White))
+        currentImage.value?.let {
+            Box(modifier = Modifier
+                .width(50.dp)
+                .height(50.dp)
+                .background(Color.White))
+        }
     }
 }

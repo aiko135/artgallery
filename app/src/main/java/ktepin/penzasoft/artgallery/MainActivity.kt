@@ -30,9 +30,9 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            val navController = rememberNavController()
             val mainViewModel: MainViewModel = viewModel()
             val fullScreenViewModel:FullScreenViewModel = viewModel()
+            val navController = rememberNavController()
             ArtgalleryTheme {
                 Log.d("Artgallery.UI", "Recompose main")
                 NavHost(navController = navController, startDestination = "screen_main") {
@@ -43,11 +43,9 @@ class MainActivity : ComponentActivity() {
                             navController.navigate("screen_full")
                         }
                     }
-                    composable(
-                        route="screen_full",
-                    ){
+                    composable("screen_full"){
                         //SCREEN 2
-                        ImageFullScreen()
+                        ImageFullScreen(fullScreenViewModel)
                     }
                 }
             }
