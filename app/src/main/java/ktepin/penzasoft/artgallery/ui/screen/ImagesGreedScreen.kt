@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
 import ktepin.penzasoft.artgallery.ui.theme.Purple80
+import ktepin.penzasoft.artgallery.ui.theme.PurpleGrey80
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
 object GridConfig {
@@ -60,24 +61,11 @@ fun ImagesGreedScreen(
 
     LaunchedEffect(lazyGridState.firstVisibleItemIndex) {
         //Effect launched after every scroll step
-        //Also recompose after every effect state change
-//        Log.d("Repository",(imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex).toString())
-//        Log.d("Repository",lazyGridState.firstVisibleItemIndex.toString())
         if (imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex < ELEMENTS_LEFT_TO_UPDATE){
             page++
             viewModel.loadPage(page)
         }
     }
-
-//    LaunchedEffect(lazyGridState.canScrollForward){
-//        if(!lazyGridState.canScrollForward){
-//            page++
-//        }
-//    }
-
-//    LaunchedEffect(page) {
-//        viewModel.loadPage(page)
-//    }
 
 
     LazyVerticalStaggeredGrid(
@@ -89,8 +77,8 @@ fun ImagesGreedScreen(
         items(imagesCollected.value.images) {
             GridItem(image = it, screenWidthDp=screenWidthDp, density=density)
         }
-//        item { Spacer(500) }
-//        item { Spacer(500) }
+        item { Spacer(500) }
+        item { Spacer(500) }
     }
 }
 
@@ -102,17 +90,17 @@ fun GridItem(image: Image, screenWidthDp: Float, density: Float) {
     val containerHeightDp = itemHeightDp(image, containerWidthDp, density)
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(Dp(containerWidthDp)) //Container should be fixed otherwise fillMaxSize() multiple rerenders will produce lags
             .height(Dp(containerHeightDp))
             .padding(padding.dp)
             .clip(RoundedCornerShape(5.dp))
             .background(Purple80),
     ) {
         AsyncImage(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             model = image.urls.small,
             contentDescription = null,
-            contentScale = ContentScale.FillWidth
+            contentScale = ContentScale.FillBounds
         )
     }
 }
@@ -123,12 +111,12 @@ fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float {
     return imHeightDp * containerWidthDp / imWidthDp
 }
 
-//@Composable
-//fun Spacer(spacerHeightDp: Int) {
-//    Row(
-//        modifier = Modifier
-//            .background(Purple80)
-//            .height(Dp(spacerHeightDp.toFloat()))
-//            .fillMaxWidth(),
-//    ) {}
-//}
+@Composable
+fun Spacer(spacerHeightDp: Int) {
+    Row(
+        modifier = Modifier
+            .background(PurpleGrey80)
+            .height(Dp(spacerHeightDp.toFloat()))
+            .fillMaxWidth(),
+    ) {}
+}
