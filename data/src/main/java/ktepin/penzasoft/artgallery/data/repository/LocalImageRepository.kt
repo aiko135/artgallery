@@ -16,7 +16,7 @@ import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
 class LocalImageRepository(api: ImageApi) : ImageRepository(api) {
     override fun getImagePage(imagePage: Int): Flow<ApiRequestResult<List<Image>>> {
         return flow{
-            Log.d("Repository", "HTTP REQUEST for page $imagePage")
+            Log.d("Artgallery.Repository", "HTTP REQUEST for page $imagePage")
             val i = if (imagePage > 0 && imagePage < 49 ) imagePage-1 else 0
             val collectionType = object : TypeToken<List<Image>>() {}.type
             val data = Gson().fromJson(localAnswers[i], collectionType) as List<Image>

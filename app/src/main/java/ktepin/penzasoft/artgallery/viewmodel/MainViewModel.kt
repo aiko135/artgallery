@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ktepin.penzasoft.artgallery.data.repository.ImageRepository
 import ktepin.penzasoft.artgallery.data.repository.LocalImageRepository
@@ -35,9 +36,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun loadPage(page: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("Repository", "$page != " + _uiState.value.prevPage.toString())
-            if (page != _uiState.value.prevPage) {
+        if (page != _uiState.value.prevPage) {
+            viewModelScope.launch(Dispatchers.IO) {
                 imageRepo.getImagePage(page).collect {
                     when (it) {
                         is RequestSuccess -> {
@@ -48,8 +48,11 @@ class MainViewModel : ViewModel() {
                             _uiState.value.imageGroupError = true
                         }
                     }
-                    //Recreate UiState inner fields to trigger recompose
-                    _uiState.value = UiState(page, _uiState.value.images, _uiState.value.imageGroupError)
+                    //Invoke to all listeners to trigger recompose.
+                    _uiState.update { currentState ->
+                        UiState(page, currentState.images, currentState.imageGroupError)
+                    }
+                    //Alternative: _uiState.value = UiState(page, _uiState.value.images, _uiState.value.imageGroupError)
                 }
             }
         }

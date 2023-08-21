@@ -4,47 +4,42 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavArgument
-import androidx.navigation.NavType
 import ktepin.penzasoft.artgallery.ui.theme.ArtgalleryTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.ImageFullScreen
 import ktepin.penzasoft.artgallery.ui.screen.ImagesGreedScreen
+import ktepin.penzasoft.artgallery.viewmodel.FullScreenViewModel
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
+
+    data class DisplayConfig(val screenWidthDp:Float, val density:Float)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val screenWidthDp = resources.configuration.screenWidthDp.toFloat()
-        val density = resources.displayMetrics.density
+        val config = DisplayConfig(
+            resources.configuration.screenWidthDp.toFloat(),
+            resources.displayMetrics.density
+        )
+
         setContent {
             val navController = rememberNavController()
-            val viewModel: MainViewModel = viewModel()
+            val mainViewModel: MainViewModel = viewModel()
+            val fullScreenViewModel:FullScreenViewModel = viewModel()
             ArtgalleryTheme {
-                Log.d("Repository", "Recompose main")
+                Log.d("Artgallery.UI", "Recompose main")
                 NavHost(navController = navController, startDestination = "screen_main") {
                     composable("screen_main"){
                         //SCREEN 1
-                        ImagesGreedScreen(viewModel, screenWidthDp, density){
+                        ImagesGreedScreen(mainViewModel, config){
+                            fullScreenViewModel.updateSelectedImage(it)
                             navController.navigate("screen_full")
                         }
                     }

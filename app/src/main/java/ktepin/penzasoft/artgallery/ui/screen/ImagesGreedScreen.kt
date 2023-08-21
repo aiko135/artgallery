@@ -1,5 +1,6 @@
 package ktepin.penzasoft.artgallery.ui.screen
 
+import android.content.res.Resources
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import ktepin.penzasoft.artgallery.MainActivity
 import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
 import ktepin.penzasoft.artgallery.ui.theme.Purple80
@@ -47,19 +49,20 @@ object GridConfig {
     const val ELEMENTS_LEFT_TO_UPDATE = 10
 }
 
+//val screenWidthDp = resources.configuration.screenWidthDp.toFloat()
+//val density = resources.displayMetrics.density
+
 @Composable
 fun ImagesGreedScreen(
     viewModel: MainViewModel,
-    screenWidthDp: Float,
-    density:Float,
+    displayConfig: MainActivity.DisplayConfig,
     onImageSelect: (im:Image) -> Unit
 ) {
     var page: Int by remember { mutableStateOf(1) }
     val imagesCollected = viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyStaggeredGridState()
 
-    Log.d("Repository", "Recompose ImagesGreedScreen")
-
+    Log.d("Artgallery.UI", "Recompose ImagesGreedScreen")
     LaunchedEffect(lazyGridState.firstVisibleItemIndex) {
         //Effect launched after every scroll step
         if (imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex < ELEMENTS_LEFT_TO_UPDATE){
@@ -76,7 +79,11 @@ fun ImagesGreedScreen(
         contentPadding = PaddingValues(0.dp),
     ) {
         items(imagesCollected.value.images) { //TODO key = {it.id}
-            GridItem(image = it, onImageSelect=onImageSelect, screenWidthDp=screenWidthDp, density=density)
+            GridItem(
+                image = it,
+                onImageSelect=onImageSelect,
+                screenWidthDp=displayConfig.screenWidthDp,
+                density=displayConfig.density)
         }
         item { Spacer(500) }
         item { Spacer(500) }
@@ -90,15 +97,18 @@ fun GridItem(
     screenWidthDp: Float,
     density: Float
 ) {
-    //manual container size calculation. Lag reduce
-    val padding = 4
-    val containerWidthDp = screenWidthDp / 2 - padding * 4
-    val containerHeightDp = itemHeightDp(image, containerWidthDp, density)
+    //manual fixed container size calculation. Lag reduce
+    val paddingDp = 4
+    val containerWidthDp = screenWidthDp / 2 - paddingDp * 4
+
+    val imWidthDp:Float = image.width / density
+    val imHeightDp:Float = image.height / density
+    val containerHeightDp =  imHeightDp * containerWidthDp / imWidthDp
     Box(
         modifier = Modifier
             .width(Dp(containerWidthDp)) //Container should be fixed otherwise fillMaxSize() multiple rerenders will produce lags
             .height(Dp(containerHeightDp))
-            .padding(padding.dp)
+            .padding(paddingDp.dp)
             .clip(RoundedCornerShape(5.dp))
             .clickable { onImageSelect.invoke(image) }
             .background(PurpleGrey80),
@@ -110,12 +120,6 @@ fun GridItem(
             contentScale = ContentScale.FillBounds
         )
     }
-}
-
-fun itemHeightDp(im:Image, containerWidthDp:Float, density: Float):Float { //TODO REFACTOR
-    val imWidthDp:Float = im.width / density
-    val imHeightDp:Float = im.height / density
-    return imHeightDp * containerWidthDp / imWidthDp
 }
 
 @Composable
