@@ -25,8 +25,11 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
 import java.lang.Float.max
 
-//custom scale/offset controller with aspect ratio check
-class MovableZoomState(private val maxScale: Float) {
+//custom scale-offset controller
+class MovableZoomState(
+    private val maxScale: Float,
+    private val imageSize: Size
+) {
     private var _scale = mutableStateOf(1f)
     val scale: Float
         get() = _scale.value
@@ -41,27 +44,16 @@ class MovableZoomState(private val maxScale: Float) {
         updateFitImageSize()
     }
 
-    private var imageSize = Size.Zero
-    fun setImageSize(size: Size) {
-        imageSize = size
-        updateFitImageSize()
-    }
-
     private var fitImageSize = Size.Zero
-    private fun updateFitImageSize() {
-        if ((imageSize == Size.Zero) || (layoutSize == Size.Zero)) {
-            fitImageSize = Size.Zero
-            return
-        }
 
+    private fun updateFitImageSize() {
         val imageAspectRatio = imageSize.width / imageSize.height
         val layoutAspectRatio = layoutSize.width / layoutSize.height
 
-        fitImageSize = if (imageAspectRatio > layoutAspectRatio) {
+        fitImageSize = if (imageAspectRatio > layoutAspectRatio)
             imageSize * (layoutSize.width / imageSize.width)
-        } else {
+        else
             imageSize * (layoutSize.height / imageSize.height)
-        }
     }
 
     fun applyGesture(pan: Offset, zoom: Float) {
@@ -98,8 +90,12 @@ fun ImageFullScreen(
 
 @Composable
 fun ImageContainer(image: Image) {
-    val zoomState = remember { MovableZoomState(5f) }
-    zoomState.setImageSize(Size(image.width.toFloat(), image.height.toFloat()))
+    val zoomState = remember {
+        MovableZoomState(
+            maxScale =  5f,
+            imageSize = Size(image.width.toFloat(), image.height.toFloat())
+        )
+    }
 
     Box(
         modifier = Modifier
