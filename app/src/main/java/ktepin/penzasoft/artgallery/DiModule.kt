@@ -8,12 +8,12 @@ import org.koin.dsl.module
 
 val diModule = module{
 
-    single<LocalImageRepository>{
+    single<ImageRepository>{
         val api = RetrofitClient.getTypedRetrofitInstance(ImageApi::class.java)
-        LocalImageRepository(api)
+        ImageRepository(api)
     }
 
     single<GetImagePageUseCase> {
-        GetImagePageUseCase(get<LocalImageRepository>())
+        GetImagePageUseCase(get<ImageRepository>())
     }
 }

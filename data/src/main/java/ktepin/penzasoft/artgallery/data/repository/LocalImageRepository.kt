@@ -21,17 +21,30 @@ class LocalImageRepository(api: ImageApi) : ImageRepository(api) {
     override fun getImagePage(imagePage: Int): Flow<ApiRequestResult<List<Image>>> {
         return flow{
             Log.d("Artgallery.Repository", "HTTP REQUEST for page $imagePage")
-            if (count > 5 && count <15){
+
+            if (count > 17){
                 emit(RequestError("403"))
                 count--
-            }
-            else{
+            }else{
                 val i = if (imagePage > 0 && imagePage < 49 ) imagePage-1 else 0
                 val collectionType = object : TypeToken<List<Image>>() {}.type
                 val data = Gson().fromJson(localAnswers[i], collectionType) as List<Image>
                 count--
                 emit(RequestSuccess(data))
             }
+
+
+//            if (count > 5 && count <15){
+//                emit(RequestError("403"))
+//                count--
+//            }
+//            else{
+//                val i = if (imagePage > 0 && imagePage < 49 ) imagePage-1 else 0
+//                val collectionType = object : TypeToken<List<Image>>() {}.type
+//                val data = Gson().fromJson(localAnswers[i], collectionType) as List<Image>
+//                count--
+//                emit(RequestSuccess(data))
+//            }
         }
     }
 

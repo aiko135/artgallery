@@ -16,7 +16,7 @@ class RetrofitClient {
             .connectTimeout(200, TimeUnit.SECONDS)
             .readTimeout(200, TimeUnit.SECONDS)
             .addInterceptor {
-                val req = it.request().newBuilder().addHeader("client_id", AUTH_TOKEN).build();
+                val req = it.request().newBuilder().addHeader("Authorization", "Client-ID $AUTH_TOKEN").build();
                 it.proceed(req)
             }
             .build()

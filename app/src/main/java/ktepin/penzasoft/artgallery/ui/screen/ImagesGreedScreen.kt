@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -143,12 +144,11 @@ fun ErrorHeader(){
             .background(Color.Red),
         contentAlignment = Alignment.Center
     ){
-         Row(){
-             Box(contentAlignment = Alignment.Center){
-                 Text(
-                     text = stringResource(R.string.network_error)
-                 )
-             }
+         Row(verticalAlignment = Alignment.CenterVertically){
+             Text(
+                 text = stringResource(R.string.network_error),
+                 textAlign = TextAlign.Center
+             )
             CircularProgressIndicator()
         }
     }
