@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("screen_full"){
                         //SCREEN 2
-                        ImageFullScreen(fullScreenViewModel, config)
+                        ImageFullScreen(fullScreenViewModel)
                     }
                 }
             }
