@@ -2,6 +2,7 @@ package ktepin.penzasoft.artgallery.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,32 +53,33 @@ fun ImageContainer(image: Image, config: MainActivity.DisplayConfig) {
     val offset = remember { mutableStateOf(Offset.Zero) }
 
     Box(
-        modifier = Modifier.graphicsLayer(
-            scaleX =  scale.value,
-            scaleY =  scale.value,
-            translationX = offset.value.x,
-            translationY = offset.value.y,
-        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    if(scale.value*zoom in MIN_ZOOM..MAX_ZOOM)
+                        scale.value *= zoom
+                    offset.value += pan
+                }
+            },
         contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        Log.d("Centroid","[${offset.value.x} ?? ${config.screenWidthDp}, ${offset.value.y} ?? ${config.screenHeightDp}]")
-                        if(scale.value*zoom in MIN_ZOOM..MAX_ZOOM)
-                            scale.value *= zoom
-//                        if (offset.value.x < config.screenWidthDp && offset.value.y < config.screenHeightDp)
-                        offset.value += pan * scale.value
-                    }
-                },
-            model = image.urls.full,
-            contentDescription = null,
-            contentScale = ContentScale.Fit
-        )
+    ){
+        Box(
+            modifier = Modifier.graphicsLayer(
+                scaleX =  scale.value,
+                scaleY =  scale.value,
+                translationX = offset.value.x,
+                translationY = offset.value.y,
+            ),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = image.urls.full,
+                contentDescription = null,
+                contentScale = ContentScale.Fit
+            )
+        }
     }
-
-
 }
