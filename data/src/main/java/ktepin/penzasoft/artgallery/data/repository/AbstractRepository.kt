@@ -19,15 +19,15 @@ abstract class AbstractRepository {
             Log.e(tag, "exception: " + e.message);
             Log.e(tag, "exception: " + e.toString());
             e.printStackTrace()
-            return RequestError(tag, ErrorCode.CONNECT_ERROR.httpCode)
+            return RequestError(ErrorCode.CONNECT_ERROR.httpCode.toString())
         }
         return res?.let { result ->
 
             result.body()?.let { body ->
                 RequestSuccess(body)
-            } ?: RequestError(tag, ErrorCode.INTERNAL_ERROR.httpCode)
+            } ?: RequestError(ErrorCode.INTERNAL_ERROR.httpCode.toString())
 
-        } ?: RequestError(tag, ErrorCode.CONNECT_ERROR.httpCode)
+        } ?: RequestError(ErrorCode.CONNECT_ERROR.httpCode.toString())
 
     }
 }

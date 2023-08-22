@@ -1,10 +1,8 @@
 package ktepin.penzasoft.artgallery.data.repository
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import ktepin.penzasoft.artgallery.data.network.ImageApi
 import ktepin.penzasoft.artgallery.domain.irepo.IRepositoryImage
 import ktepin.penzasoft.artgallery.domain.model.ApiRequestResult

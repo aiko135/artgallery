@@ -8,5 +8,4 @@ class RequestSuccess<T>(
 
 class RequestError<T>(
     val message: String,
-    val code: Int
 ) : ApiRequestResult<T>()
