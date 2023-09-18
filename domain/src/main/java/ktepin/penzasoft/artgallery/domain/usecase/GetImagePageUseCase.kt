@@ -8,5 +8,11 @@ import ktepin.penzasoft.artgallery.domain.model.Image
 class GetImagePageUseCase(
     private val repo: ImageRepository
 ) {
-    fun getImagePage(imagePage:Int): Flow<ApiRequestResult<List<Image>>> = repo.getImagePage(imagePage)
+    private var _page: Int = 0
+    val page: Int
+        get() = _page
+
+    fun getNextImagePage(): Flow<ApiRequestResult<List<Image>>> = repo.getImagePage(++_page)
+
+    fun getCurrentImagePage(): Flow<ApiRequestResult<List<Image>>> = repo.getImagePage(_page)
 }

@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ktepin.penzasoft.artgallery.ui.screen.ImageFullScreen
-import ktepin.penzasoft.artgallery.ui.screen.ImagesGreedScreen
+import ktepin.penzasoft.artgallery.ui.screen.ImagesGridScreen
 import ktepin.penzasoft.artgallery.viewmodel.FullScreenViewModel
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "screen_main") {
                     composable("screen_main"){
                         //SCREEN 1
-                        ImagesGreedScreen(mainViewModel, config){
+                        ImagesGridScreen(mainViewModel, config){
                             fullScreenViewModel.updateSelectedImage(it)
                             navController.navigate("screen_full")
                         }

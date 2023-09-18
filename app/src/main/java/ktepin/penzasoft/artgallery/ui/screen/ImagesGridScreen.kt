@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,10 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +36,6 @@ import ktepin.penzasoft.artgallery.MainActivity
 import ktepin.penzasoft.artgallery.R
 import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
-import ktepin.penzasoft.artgallery.ui.theme.Purple80
 import ktepin.penzasoft.artgallery.ui.theme.PurpleGrey80
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
 
@@ -51,12 +45,11 @@ object GridConfig {
 }
 
 @Composable
-fun ImagesGreedScreen(
+fun ImagesGridScreen(
     viewModel: MainViewModel,
     displayConfig: MainActivity.DisplayConfig,
     onImageSelect: (im:Image) -> Unit
 ) {
-    var page: Int by remember { mutableStateOf(1) }
     val imagesCollected = viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyStaggeredGridState()
 
@@ -66,8 +59,7 @@ fun ImagesGreedScreen(
         if (!imagesCollected.value.imageGroupError){
             //init new page loading only if no error
             if (imagesCollected.value.images.size - lazyGridState.firstVisibleItemIndex < ELEMENTS_LEFT_TO_UPDATE){
-                page++
-                viewModel.loadPage(page)
+                viewModel.loadNextPage()
             }
         }
     }
