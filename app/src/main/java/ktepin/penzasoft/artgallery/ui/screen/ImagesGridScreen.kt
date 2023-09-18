@@ -47,7 +47,7 @@ object GridConfig {
 
 @Composable
 fun ImagesGridScreen(
-    viewModel: MainViewModel = koinViewModel<MainViewModel>(),
+    viewModel: MainViewModel = koinViewModel(),
     displayConfig: MainActivity.DisplayConfig,
     onImageSelect: (im:Image) -> Unit
 ) {

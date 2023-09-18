@@ -18,7 +18,7 @@ val diModule = module {
     }
 
     single<GetImagePageUseCase> {
-        GetImagePageUseCase(get())
+        GetImagePageUseCase(get<ImageRepositoryImpl>())
     }
 
     viewModel { MainViewModel(get()) }
