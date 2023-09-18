@@ -33,7 +33,7 @@ class MainViewModel(private val getImagePageUseCase: GetImagePageUseCase) : View
         val currentPage = getImagePageUseCase.page;
         if (currentPage != _uiState.value.prevPage || _uiState.value.imageGroupError) {
             viewModelScope.launch(Dispatchers.IO) {
-                getImagePageUseCase.getNextImagePage().collect {
+                getImagePageUseCase.getNextImagePage().let {
                     when (it) {
                         is RequestSuccess -> {
                             Log.d("Artgallery.VM", "success")

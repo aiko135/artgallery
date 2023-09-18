@@ -5,6 +5,7 @@ import ktepin.penzasoft.artgallery.domain.irepo.ImageRepository
 import ktepin.penzasoft.artgallery.domain.model.ApiRequestResult
 import ktepin.penzasoft.artgallery.domain.model.Image
 
+//better to name it "interactor"
 class GetImagePageUseCase(
     private val repo: ImageRepository
 ) {
@@ -12,7 +13,7 @@ class GetImagePageUseCase(
     val page: Int
         get() = _page
 
-    fun getNextImagePage(): Flow<ApiRequestResult<List<Image>>> = repo.getImagePage(++_page)
+    suspend fun getNextImagePage(): ApiRequestResult<List<Image>> = repo.getImagePage(++_page)
 
-    fun getCurrentImagePage(): Flow<ApiRequestResult<List<Image>>> = repo.getImagePage(_page)
+    suspend fun getCurrentImagePage(): ApiRequestResult<List<Image>> = repo.getImagePage(_page)
 }

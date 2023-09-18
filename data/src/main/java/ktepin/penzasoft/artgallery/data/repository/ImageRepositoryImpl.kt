@@ -14,10 +14,9 @@ open class ImageRepositoryImpl(
 
     override val tag: String = "Artgallery.Repository"
 
-    override fun getImagePage(imagePage: Int): Flow<ApiRequestResult<List<Image>>> = flow {
+    override suspend fun getImagePage(imagePage: Int): ApiRequestResult<List<Image>>{
         Log.d(tag, "HTTP REQUEST for page $imagePage")
-        val result = executeRequest(api.getImagePage(imagePage.toString()))
-        emit(result)
+        return executeRequest(api.getImagePage(imagePage.toString()))
     }
 
 }
