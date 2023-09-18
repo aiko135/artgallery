@@ -38,6 +38,7 @@ import ktepin.penzasoft.artgallery.domain.model.Image
 import ktepin.penzasoft.artgallery.ui.screen.GridConfig.ELEMENTS_LEFT_TO_UPDATE
 import ktepin.penzasoft.artgallery.ui.theme.PurpleGrey80
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 object GridConfig {
     //number of images left to display that triggers new page load
@@ -46,7 +47,7 @@ object GridConfig {
 
 @Composable
 fun ImagesGridScreen(
-    viewModel: MainViewModel,
+    viewModel: MainViewModel = koinViewModel<MainViewModel>(),
     displayConfig: MainActivity.DisplayConfig,
     onImageSelect: (im:Image) -> Unit
 ) {

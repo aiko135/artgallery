@@ -16,6 +16,7 @@ import ktepin.penzasoft.artgallery.ui.screen.ImageFullScreen
 import ktepin.penzasoft.artgallery.ui.screen.ImagesGridScreen
 import ktepin.penzasoft.artgallery.viewmodel.FullScreenViewModel
 import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -31,22 +32,27 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            val mainViewModel: MainViewModel = viewModel()
-            val fullScreenViewModel:FullScreenViewModel = viewModel()
+            //inject as State by Compose
+            //val mainViewModel: MainViewModel = viewModel()
+            //val fullScreenViewModel:FullScreenViewModel = viewModel()
+
+            //inject by Koin + Compose
+            val fullScreenViewModel = koinViewModel<FullScreenViewModel>()
+
             val navController = rememberNavController()
             ArtgalleryTheme {
                 Log.d("Artgallery.UI", "Recompose main")
                 NavHost(navController = navController, startDestination = "screen_main") {
                     composable("screen_main"){
                         //SCREEN 1
-                        ImagesGridScreen(mainViewModel, config){
+                        ImagesGridScreen(displayConfig = config){
                             fullScreenViewModel.updateSelectedImage(it)
                             navController.navigate("screen_full")
                         }
                     }
                     composable("screen_full"){
                         //SCREEN 2
-                        ImageFullScreen(fullScreenViewModel)
+                        ImageFullScreen()
                     }
                 }
             }

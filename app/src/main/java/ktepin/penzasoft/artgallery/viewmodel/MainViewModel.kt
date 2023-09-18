@@ -17,8 +17,7 @@ import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
 import ktepin.penzasoft.artgallery.domain.usecase.GetImagePageUseCase
 import org.koin.java.KoinJavaComponent.inject
 
-class MainViewModel : ViewModel() {
-    private val getImagePageUseCase: GetImagePageUseCase by inject( GetImagePageUseCase::class.java)
+class MainViewModel(private val getImagePageUseCase: GetImagePageUseCase) : ViewModel() {
 
     data class UiState(
         var prevPage: Int,

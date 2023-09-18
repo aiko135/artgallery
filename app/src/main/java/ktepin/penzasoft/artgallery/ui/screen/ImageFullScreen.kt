@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
+import ktepin.penzasoft.artgallery.viewmodel.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.lang.Float.max
 
 //custom scale-offset controller
@@ -71,7 +73,7 @@ class MovableZoomState(
 
 @Composable
 fun ImageFullScreen(
-    viewModel: FullScreenViewModel,
+    viewModel: FullScreenViewModel = koinViewModel<FullScreenViewModel>()
 ) {
     val currentImage = viewModel.selectedImage.collectAsState()
 
