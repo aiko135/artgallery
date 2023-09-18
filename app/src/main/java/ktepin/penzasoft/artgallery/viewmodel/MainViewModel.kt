@@ -17,8 +17,7 @@ import ktepin.penzasoft.artgallery.domain.model.RequestSuccess
 import ktepin.penzasoft.artgallery.domain.usecase.GetImagePageUseCase
 import org.koin.java.KoinJavaComponent.inject
 
-class MainViewModel : ViewModel() {
-    private val getImagePageUseCase: GetImagePageUseCase by inject( GetImagePageUseCase::class.java)
+class MainViewModel(private val getImagePageUseCase: GetImagePageUseCase) : ViewModel() {
 
     data class UiState(
         var prevPage: Int,
@@ -26,33 +25,31 @@ class MainViewModel : ViewModel() {
         var imageGroupError: Boolean
     )
 
-    private val _uiState = MutableStateFlow(UiState(0, mutableListOf(), false))
+    private val _uiState = MutableStateFlow(UiState(-1, mutableListOf(), false))
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    init {
-        loadPage(1);
-    }
 
-    fun loadPage(page: Int) {
-        if (page != _uiState.value.prevPage || _uiState.value.imageGroupError) {
+    fun loadNextPage() {
+        val currentPage = getImagePageUseCase.page;
+        if (currentPage != _uiState.value.prevPage || _uiState.value.imageGroupError) {
             viewModelScope.launch(Dispatchers.IO) {
-                getImagePageUseCase.getImagePage(page).collect {
+                getImagePageUseCase.getNextImagePage().let {
                     when (it) {
                         is RequestSuccess -> {
                             Log.d("Artgallery.VM", "success")
                             _uiState.value.images.addAll(it.entity)
                             _uiState.update { currentState ->
-                                UiState(page, currentState.images, false)
+                                UiState(currentPage, currentState.images, false)
                             }
                         }
 
                         is RequestError -> {
                             Log.d("Artgallery.VM", "fail")
                             _uiState.update { currentState ->
-                                UiState(page, currentState.images, true)
+                                UiState(currentPage, currentState.images, true)
                             }
                             delay(2000) //wait
-                            loadPage(page) //try again
+                            getImagePageUseCase.getCurrentImagePage() //try again
                         }
                     }
                 }

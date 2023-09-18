@@ -5,5 +5,5 @@ import ktepin.penzasoft.artgallery.domain.model.ApiRequestResult
 import ktepin.penzasoft.artgallery.domain.model.Image
 
 interface ImageRepository {
-    fun getImagePage(imagePage:Int): Flow<ApiRequestResult<List<Image>>>
+    suspend fun getImagePage(imagePage:Int): ApiRequestResult<List<Image>>
 }
